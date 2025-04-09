@@ -3,19 +3,21 @@ const placesList = document.querySelector('.places__list');
 
 const createCard = (image, title) => {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
-  cardElement.querySelector('.card__image').src = image;
+  const cardImage = cardElement.querySelector('.card__image');
+  cardImage.src = image;
+  cardImage.alt = `Картинка, на которой показывается ${title}`;
   cardElement.querySelector('.card__title').textContent = title;
   cardElement.querySelector('.card__delete-button').addEventListener('click', () => {
     deleteCard(cardElement);
   });
 
-  placesList.append(cardElement);
+  return cardElement;
 }
 
-function deleteCard(cardElement) {
-  cardElement.remove();
+function deleteCard(card) {
+  card.remove();
 }
 
 initialCards.forEach((item) => {
-  createCard(item.link, item.name);
+  placesList.append(createCard(item.link, item.name));
 })
