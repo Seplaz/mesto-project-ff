@@ -1,5 +1,6 @@
+import { initialCards } from "./cards";
+
 const cardTemplate = document.querySelector('#card-template').content;
-const placesList = document.querySelector('.places__list');
 
 const createCard = (image, title) => {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
@@ -18,6 +19,4 @@ function deleteCard(card) {
   card.remove();
 }
 
-initialCards.forEach((item) => {
-  placesList.append(createCard(item.link, item.name));
-})
+export { createCard };

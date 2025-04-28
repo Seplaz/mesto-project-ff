@@ -5,7 +5,7 @@ const kamchatkaImage = new URL('https://pictures.s3.yandex.net/frontend-develope
 const kholmogorskyImage = new URL('https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg', import.meta.url);
 const baikalImage = new URL('https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg', import.meta.url)
 
-const initialCards = [
+export const initialCards = [
     {
       name: "Архыз",
       link: arkhyzImage,
