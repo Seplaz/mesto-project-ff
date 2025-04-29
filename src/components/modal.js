@@ -1,12 +1,8 @@
-const profileContainer = document.querySelector('.profile');
-const cardsContainer = document.querySelector('.places');
+const profile = document.querySelector('.profile');
 
 const editPopup = document.querySelector('.popup_type_edit');
 const newCardPopup = document.querySelector('.popup_type_new-card');
-
 const imagePopup = document.querySelector('.popup_type_image');
-const popupImage = imagePopup.querySelector('.popup__image');
-const popupCaption = imagePopup.querySelector('.popup__caption');
 
 const popups = document.querySelectorAll('.popup');
 
@@ -18,31 +14,28 @@ const closePopup = (popup) => {
   popup.classList.remove('popup_is-opened');
 };
 
-profileContainer.addEventListener('click', (event) => {
+document.addEventListener('click', (event) => {
   const target = event.target;
   if (target.classList.contains('profile__edit-button')) {
     openPopup(editPopup);
   } else if (target.classList.contains('profile__add-button')) {
     openPopup(newCardPopup);
-  };
-});
+  } else if (target.closest('.card__image')) {
 
-cardsContainer.addEventListener('click', (event) => {
-  const card = event.target.closest('.card');
-  const cardImage = card.querySelector('.card__image');
-  const cardTitle = card.querySelector('.card__title');
+    const card = target.closest('.card');
+    const cardImage = card.querySelector('.card__image');
+    const cardTitle = card.querySelector('.card__title');
 
-  if (card) {
+    const popupImage = imagePopup.querySelector('.popup__image');
+    const popupCaption = imagePopup.querySelector('.popup__caption');
+
     popupImage.src = cardImage.src;
     popupImage.alt = cardImage.alt;
     popupCaption.textContent = cardTitle.textContent;
-  }
 
-  if (event.target.closest('.card__delete-button') || event.target.closest('.card__like-button')) {
-    return;
+    openPopup(imagePopup);
   };
-  
-  openPopup(imagePopup);
+  document.removeEventListener('click', (event));
 });
 
 document.addEventListener('click', (event) => {
@@ -50,6 +43,7 @@ document.addEventListener('click', (event) => {
     const popup = event.target.closest('.popup');
     closePopup(popup);
   };
+  document.removeEventListener('click', (event));
 });
 
 popups.forEach((popup) => {
@@ -57,14 +51,16 @@ popups.forEach((popup) => {
     if (event.target === popup) {
       closePopup(popup);
     };
+    popup.removeEventListener('click', (event));
   });
 });
 
-document,addEventListener('keydown', (event) => {
+document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     const openedPopup = document.querySelector('.popup_is-opened');
     if (openedPopup) {
       closePopup(openedPopup);
     };
+    document.removeEventListener('click', (event));
   };
 });
