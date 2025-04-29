@@ -1,5 +1,3 @@
-import { initialCards } from "./cards";
-
 const cardTemplate = document.querySelector('#card-template').content;
 
 const createCard = (image, title) => {
