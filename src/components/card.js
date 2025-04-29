@@ -18,3 +18,5 @@ function deleteCard(card) {
 }
 
 export { createCard };
+
+// CARD LIKE
