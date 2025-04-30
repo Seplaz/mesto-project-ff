@@ -1,5 +1,5 @@
-const handleEscKeyUp = (event) => {
-  if (event.key ===  'Escape') {
+const handleEscKeyUp = (e) => {
+  if (e.key ===  'Escape') {
     const popup = document.querySelector('.popup_is-opened');
     closePopup(popup);
   };
@@ -7,12 +7,12 @@ const handleEscKeyUp = (event) => {
 
 export const openPopup = (popup) => {
   popup.classList.add('popup_is-opened');
-  addEventListener('keydown', handleEscKeyUp);
+  document.addEventListener('keydown', handleEscKeyUp);
 };
 
 export const closePopup = (popup) => {
   popup.classList.remove('popup_is-opened');
-  removeEventListener('keydown', handleEscKeyUp);
+  document.removeEventListener('keydown', handleEscKeyUp);
 };
 
 export const addListener = (popup) => {
@@ -22,7 +22,7 @@ export const addListener = (popup) => {
   });
 
   popup.addEventListener('mousedown', (event) => {
-    if (event.target.classList.contains('.popup')) {
+    if (event.target.classList.contains('popup')) {
       closePopup(popup);
     };
   });
