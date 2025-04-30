@@ -15,7 +15,7 @@ const createCard = (image, title) => {
 
 function deleteCard(card) {
   card.remove();
-}
+};
 
 export { createCard };
 

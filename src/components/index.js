@@ -1,22 +1,17 @@
 import { createCard } from "./card";
 import { initialCards } from "./cards";
-import { showImagePopup, openPopup } from "./modal";
+import { openPopup, closePopup, addListener } from "./modal";
 
 const placesList = document.querySelector('.places__list');
-const editPopup = document.querySelector('.popup_type_edit');
-const newCardPopup = document.querySelector('.popup_type_new-card');
+
+const profileEditPopup = document.querySelector('.popup_type_edit');
+const addNewCardPopup = document.querySelector('.popup_type_new-card');
+const openImagePopup = document.querySelector('.popup_type_image');
 
 initialCards.forEach((item) => {
   placesList.append(createCard(item.link, item.name));
-})
-
-document.addEventListener('click', (event) => {
-  const target = event.target;
-  if (target.classList.contains('profile__edit-button')) {
-    openPopup(editPopup);
-  } else if (target.classList.contains('profile__add-button')) {
-    openPopup(newCardPopup);
-  } else if (target.closest('.card__image')) {
-    showImagePopup(target.closest('.card'));
-  };
 });
+
+addListener(profileEditPopup);
+addListener(addNewCardPopup);
+addListener(openImagePopup);

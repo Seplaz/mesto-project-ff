@@ -1,54 +1,29 @@
-const imagePopup = document.querySelector('.popup_type_image');
-const popups = document.querySelectorAll('.popup');
-
-const buttonClose = (event) => {
-  if (event.target.classList.contains('popup__close')) {
-    const popup = event.target.closest('.popup');
+const handleEscKeyUp = (event) => {
+  if (event.key ===  'Escape') {
+    const popup = document.querySelector('.popup_is-opened');
     closePopup(popup);
   };
 };
 
-const escapeKeyClose = (event) => {
-  if (event.key === 'Escape') {
-    const openedPopup = document.querySelector('.popup_is-opened');
-    if (openedPopup) {
-      closePopup(openedPopup);
-    };
-  };
-};
-
-const openPopup = (popup) => {
+export const openPopup = (popup) => {
   popup.classList.add('popup_is-opened');
-  document.addEventListener('click', buttonClose);
-  document.addEventListener('keydown', escapeKeyClose);
+  addEventListener('keydown', handleEscKeyUp);
 };
 
-const closePopup = (popup) => {
+export const closePopup = (popup) => {
   popup.classList.remove('popup_is-opened');
-  document.removeEventListener('click', buttonClose);
-  document.removeEventListener('keydown', escapeKeyClose);
+  removeEventListener('keydown', handleEscKeyUp);
 };
 
-const showImagePopup = (card) => {
-  const cardImage = card.querySelector('.card__image');
-  const cardTitle = card.querySelector('.card__title');
-  
-  const popupImage = imagePopup.querySelector('.popup__image');
-  const popupCaption = imagePopup.querySelector('.popup__caption');
-  
-  popupImage.src = cardImage.src;
-  popupImage.alt = cardImage.alt;
-  popupCaption.textContent = cardTitle.textContent;
-  
-  openPopup(imagePopup);
-};
+export const addListener = (popup) => {
+  const closeButton = popup.querySelector('.popup__close');
+  closeButton.addEventListener('click', () => {
+    closePopup(popup);
+  });
 
-popups.forEach((popup) => {
-  popup.addEventListener('click', (event) => {
-    if (event.target === popup) {
+  popup.addEventListener('mousedown', (event) => {
+    if (event.target.classList.contains('.popup')) {
       closePopup(popup);
     };
   });
-});
-
-export { showImagePopup, openPopup };
+};
