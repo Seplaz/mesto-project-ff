@@ -6,7 +6,7 @@ const handleEscKeyUp = (e) => {
 };
 
 export const openPopup = (popup) => {
-  popup.classList.add('popup_is-opened', 'popup_is-animated');
+  popup.classList.add('popup_is-opened');
   document.addEventListener('keydown', handleEscKeyUp);
 };
 
@@ -15,15 +15,17 @@ export const closePopup = (popup) => {
   document.removeEventListener('keydown', handleEscKeyUp);
 };
 
-export const addListener = (popup) => {
+export const setupPopupListeners = (popup) => {
   const closeButton = popup.querySelector('.popup__close');
-  closeButton.addEventListener('click', () => {
-    closePopup(popup);
-  });
 
-  popup.addEventListener('mousedown', (event) => {
+  const closePopupHandler = () => closePopup(popup);
+  closeButton.addEventListener('click', closePopupHandler);
+
+  const overlayClickHandler = (event) => {
     if (event.target.classList.contains('popup')) {
       closePopup(popup);
     };
-  });
+  };
+
+  popup.addEventListener('mousedown', overlayClickHandler);
 };
