@@ -6,7 +6,7 @@ const handleEscKeyUp = (e) => {
 };
 
 export const openPopup = (popup) => {
-  popup.classList.add('popup_is-opened');
+  popup.classList.add('popup_is-opened', 'popup_is-animated');
   document.addEventListener('keydown', handleEscKeyUp);
 };
 
