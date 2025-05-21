@@ -2,7 +2,16 @@ import './pages/index.css';
 import { createCard, onDeleteCard, handleLikeButton } from "./components/card.js";
 import { initialCards } from "./components/cards.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
-import { enableValidation } from './components/validation.js';
+import { enableValidation, clearValidation } from './components/validation.js';
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
 
 const placesList = document.querySelector('.places__list');
 
@@ -55,7 +64,7 @@ const handleImageFormSubmit = (event) => {
     link: cardUrl
   };
 
-  placesList.prepend(createCard(newCardData, onDeleteCard, handleLikeButton, onOpenPreview));
+  placesList.prepend(createCard(newCardData, handleLikeButton, onDeleteCard, onOpenPreview));
   addImageFormElement.reset();
   closePopup(addNewCardPopup);
 };
@@ -65,10 +74,12 @@ addImageFormElement.addEventListener('submit', handleImageFormSubmit);
 editProfileButton.addEventListener('click', () => {
     nameInput.value = profileName.textContent;
     descriptionInput.value = profileDescription.textContent;
+    clearValidation(profileFormElement, validationConfig);
     openPopup(profileEditPopup);
 });
 
 addImageButton.addEventListener('click', () => {
+  clearValidation(addImageFormElement, validationConfig);
   openPopup(addNewCardPopup);
 });
 
@@ -85,4 +96,4 @@ initialCards.forEach((data) => {
   placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
 });
 
-enableValidation();
+enableValidation(validationConfig);

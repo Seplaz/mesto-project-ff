@@ -13,13 +13,15 @@ export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview) => {
 
   cardImage.addEventListener('click', () => onOpenPreview(data));
   deleteButton.addEventListener('click', () => onDeleteCard(cardElement));
-  likeButton.addEventListener('click', onLikeCard);
+  likeButton.addEventListener('click', (evt) => handleLikeButton(evt));
 
   return cardElement;
 };
 
 export const handleLikeButton = (event) => {
-  event.target.classList.toggle('card__like-button_is-active');
+  if (event.target) {
+    event.target.classList.toggle('card__like-button_is-active');
+  }
 };
 
 export const onDeleteCard = (cardElement) => {
