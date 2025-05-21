@@ -66,6 +66,7 @@ const handleImageFormSubmit = (event) => {
 
   placesList.prepend(createCard(newCardData, handleLikeButton, onDeleteCard, onOpenPreview));
   addImageFormElement.reset();
+  clearValidation(addImageFormElement, validationConfig);
   closePopup(addNewCardPopup);
 };
 
