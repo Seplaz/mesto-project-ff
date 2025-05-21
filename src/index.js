@@ -2,6 +2,7 @@ import './pages/index.css';
 import { createCard, onDeleteCard, handleLikeButton } from "./components/card.js";
 import { initialCards } from "./components/cards.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
+import { enableValidation } from './components/validation.js';
 
 const placesList = document.querySelector('.places__list');
 
@@ -83,3 +84,5 @@ const onOpenPreview = (data) => {
 initialCards.forEach((data) => {
   placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
 });
+
+enableValidation();
