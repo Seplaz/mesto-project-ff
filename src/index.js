@@ -37,8 +37,6 @@ const profileFormElement = profileEditPopup.querySelector('.popup__form');
 const nameInput = profileFormElement.querySelector('.popup__input_type_name');
 const descriptionInput = profileFormElement.querySelector('.popup__input_type_description');
 
-getProfile();
-
 const handleProfileFormSubmit = (event) => {
   event.preventDefault();
 
@@ -96,13 +94,13 @@ const onOpenPreview = (data) => {
   openPopup(openImagePopup);
 };
 
-// initialCards.forEach((data) => {
-//   placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
-// });
+getProfile();
 
 getInitialCards()
-  .then((data) => {
-    placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
+  .then((cards) => {
+    cards.forEach((data) => {
+      placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
+    });
   });
 
 enableValidation(validationConfig);

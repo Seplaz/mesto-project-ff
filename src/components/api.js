@@ -8,7 +8,9 @@ const config = {
 }
 
 export const getProfile = () => {
-  return fetch(`${config.baseUrl}/users/me`)
+  return fetch(`${config.baseUrl}/users/me`, {
+    headers: config.headers
+  })
     .then((res) => {
       if (res.ok) {
         return res.json();
@@ -24,7 +26,9 @@ export const getProfile = () => {
 }
 
 export const getInitialCards = () => {
-  return fetch(`${config.baseUrl}/cards`)
+  return fetch(`${config.baseUrl}/cards`, {
+    headers: config.headers
+  })
     .then((res) => {
       if (res.ok) {
         return res.json();
