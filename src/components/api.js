@@ -1,1 +1,40 @@
 // функции для взаимодействия с сервером
+const config = {
+  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-39',
+  headers: {
+    authorization: 'b2b2a252-e682-4775-b52b-e727f812412d',
+    'Content-Type': 'application/json'
+  }
+}
+
+export const getProfile = () => {
+  return fetch(`${config.baseUrl}/users/me`)
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return console.log(`Ошибка: ${err}`);
+    })
+}
+
+export const getInitialCards = () => {
+  return fetch(`${config.baseUrl}/cards`)
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      return console.log(`Ошибка: ${err}`);
+    })
+}

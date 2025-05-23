@@ -1,8 +1,8 @@
 import './pages/index.css';
 import { createCard, onDeleteCard, handleLikeButton } from "./components/card.js";
-import { initialCards } from "./components/cards.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, clearValidation } from './components/validation.js';
+import { getProfile, getInitialCards } from './components/api.js';
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -25,6 +25,7 @@ popups.forEach((popup) => {
 const profileEditPopup = document.querySelector('.popup_type_edit');
 const profileName = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const profileAvatar = document.querySelector('.profile__image');
 const editProfileButton = document.querySelector('.profile__edit-button');
 
 const addNewCardPopup = document.querySelector('.popup_type_new-card');
@@ -35,6 +36,8 @@ const openImagePopup = document.querySelector('.popup_type_image');
 const profileFormElement = profileEditPopup.querySelector('.popup__form');
 const nameInput = profileFormElement.querySelector('.popup__input_type_name');
 const descriptionInput = profileFormElement.querySelector('.popup__input_type_description');
+
+getProfile();
 
 const handleProfileFormSubmit = (event) => {
   event.preventDefault();
@@ -93,8 +96,13 @@ const onOpenPreview = (data) => {
   openPopup(openImagePopup);
 };
 
-initialCards.forEach((data) => {
-  placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
-});
+// initialCards.forEach((data) => {
+//   placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
+// });
+
+getInitialCards()
+  .then((data) => {
+    placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
+  });
 
 enableValidation(validationConfig);
