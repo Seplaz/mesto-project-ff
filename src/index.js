@@ -94,7 +94,12 @@ const onOpenPreview = (data) => {
   openPopup(openImagePopup);
 };
 
-getProfile();
+getProfile()
+  .then((data) => {
+    profileName.textContent = data.name;
+    profileDescription.textContent = data.about;
+    profileAvatar.url = data.avatar;
+  });
 
 getInitialCards()
   .then((cards) => {
