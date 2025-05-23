@@ -99,6 +99,9 @@ getProfile()
     profileName.textContent = data.name;
     profileDescription.textContent = data.about;
     profileAvatar.url = data.avatar;
+  })
+  .catch((err) => {
+    console.log(err);
   });
 
 getInitialCards()
@@ -106,6 +109,9 @@ getInitialCards()
     cards.forEach((data) => {
       placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
     });
+  })
+  .catch((err) => {
+    console.log(err);
   });
 
 enableValidation(validationConfig);

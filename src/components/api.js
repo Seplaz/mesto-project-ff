@@ -16,13 +16,7 @@ export const getProfile = () => {
         return res.json();
       }
       return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .then((res) => {
-      return res;
-    })
-    .catch((err) => {
-      return console.log(`Ошибка: ${err}`);
-    })
+    });
 }
 
 export const getInitialCards = () => {
@@ -34,11 +28,5 @@ export const getInitialCards = () => {
         return res.json();
       }
       return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .then((res) => {
-      return res;
-    })
-    .catch((err) => {
-      return console.log(`Ошибка: ${err}`);
-    })
+    });
 }
