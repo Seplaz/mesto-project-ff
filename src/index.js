@@ -2,7 +2,7 @@ import './pages/index.css';
 import { createCard, onDeleteCard, handleLikeButton } from "./components/card.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfile, getInitialCards } from './components/api.js';
+import { getProfile, getInitialCards, updateProfile } from './components/api.js';
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -43,10 +43,15 @@ const handleProfileFormSubmit = (event) => {
   const nameValue = nameInput.value;
   const descriptionValue = descriptionInput.value;
 
-  profileName.textContent = nameValue;
-  profileDescription.textContent = descriptionValue;
-
-  closePopup(profileEditPopup);
+  updateProfile(nameValue, descriptionValue)
+    .then((data) => {
+      profileName.textContent = data.name;
+      profileDescription.textContent = data.about;
+      closePopup(profileEditPopup);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 profileFormElement.addEventListener('submit', handleProfileFormSubmit);
@@ -94,18 +99,12 @@ const onOpenPreview = (data) => {
   openPopup(openImagePopup);
 };
 
-getProfile()
-  .then((data) => {
-    profileName.textContent = data.name;
-    profileDescription.textContent = data.about;
-    profileAvatar.url = data.avatar;
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+Promise.all([getProfile(), getInitialCards()])
+  .then(([userData, cards]) => {
+    profileName.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
 
-getInitialCards()
-  .then((cards) => {
     cards.forEach((data) => {
       placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
     });
