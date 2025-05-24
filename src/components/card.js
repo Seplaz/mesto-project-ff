@@ -13,6 +13,11 @@ export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview, userId
   cardTitle.textContent = data.name;
   likeCount.textContent = data.likes.length;
 
+  const isLiked = data.likes.some(like => like._id === userId);
+  if (isLiked) {
+    likeButton.classList.add('card__like-button_is-active');
+  }
+
   if (data.owner._id === userId) {
     deleteButton.style.display = 'block';
     deleteButton.addEventListener('click', () => onDeleteCard(cardElement, data._id));
@@ -21,7 +26,7 @@ export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview, userId
   }
 
   cardImage.addEventListener('click', () => onOpenPreview(data));
-  likeButton.addEventListener('click', (evt) => handleLikeButton(evt));
+  likeButton.addEventListener('click', () => onLikeCard(likeButton, data._id, likeCount));
 
   return cardElement;
 };

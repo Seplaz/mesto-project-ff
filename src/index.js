@@ -2,7 +2,7 @@ import './pages/index.css';
 import { createCard, onDeleteCard, handleLikeButton } from "./components/card.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfile, getInitialCards, updateProfile, postNewCard, deleteCard } from './components/api.js';
+import { getProfile, getInitialCards, updateProfile, postNewCard, deleteCard, deleteLike, putLike, updateAvatar } from './components/api.js';
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -10,7 +10,11 @@ const validationConfig = {
   submitButtonSelector: '.popup__button',
   inactiveButtonClass: 'popup__button_disabled',
   inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
+  errorClass: 'popup__error_visible',
+  inputErrorSelector: '.popup__input-error',
+  errorSelector: '.popup__error',
+  avatarUrlPattern: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
+  avatarUrlError: 'Введите корректный URL изображения'
 };
 
 const placesList = document.querySelector('.places__list');
@@ -40,17 +44,27 @@ const descriptionInput = profileFormElement.querySelector('.popup__input_type_de
 const handleProfileFormSubmit = (event) => {
   event.preventDefault();
 
-  const nameValue = nameInput.value;
-  const descriptionValue = descriptionInput.value;
+  const name = nameInput.value;
+  const description = descriptionInput.value;
+  const submitButton = profileFormElement.querySelector('.popup__button');
 
-  updateProfile(nameValue, descriptionValue)
+  submitButton.textContent = 'Сохранение...';
+  submitButton.disabled = true;
+
+  updateProfile(name, description)
     .then((data) => {
       profileName.textContent = data.name;
       profileDescription.textContent = data.about;
+      profileFormElement.reset();
+      clearValidation(profileFormElement, validationConfig);
       closePopup(profileEditPopup);
     })
     .catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      submitButton.textContent = 'Сохранить';
+      submitButton.disabled = false;
     });
 };
 
@@ -85,11 +99,30 @@ const handleDeleteCardSubmit = (event) => {
 
 deleteCardForm.addEventListener('submit', handleDeleteCardSubmit);
 
+const handleLikeCard = (likeButton, cardId, likeCount) => {
+  const isLiked = likeButton.classList.contains('card__like-button_is-active');
+
+  const likeRequest = isLiked ? deleteLike(cardId) : putLike(cardId);
+
+  likeRequest
+    .then((data) => {
+      likeCount.textContent = data.likes.length;
+      likeButton.classList.toggle('card__like-button_is-active');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 const handleImageFormSubmit = (event) => {
   event.preventDefault();
 
   const cardName = cardNameInput.value;
   const cardUrl = cardUrlInput.value;
+  const submitButton = addImageFormElement.querySelector('.popup__button');
+
+  submitButton.textContent = 'Сохранение...';
+  submitButton.disabled = true;
 
   postNewCard(cardName, cardUrl)
     .then((data) => {
@@ -101,6 +134,10 @@ const handleImageFormSubmit = (event) => {
     })
     .catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      submitButton.textContent = 'Создать';
+      submitButton.disabled = false;
     });
 };
 
@@ -134,7 +171,7 @@ Promise.all([getProfile(), getInitialCards()])
     profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
 
     cards.forEach((data) => {
-      const cardElement = createCard(data, handleLikeButton, (element, id) => handleDeleteCard(element, id), onOpenPreview, userData._id);
+      const cardElement = createCard(data, handleLikeCard, (element, id) => handleDeleteCard(element, id), onOpenPreview, userData._id);
       placesList.append(cardElement);
     });
   })
@@ -143,3 +180,39 @@ Promise.all([getProfile(), getInitialCards()])
   });
 
 enableValidation(validationConfig);
+
+const updateAvatarPopup = document.querySelector('.popup_type_update-avatar');
+const updateAvatarForm = updateAvatarPopup.querySelector('.popup__form');
+const avatarUrlInput = updateAvatarForm.querySelector('.popup__input');
+
+profileAvatar.addEventListener('click', () => {
+  openPopup(updateAvatarPopup);
+});
+
+const handleUpdateAvatarSubmit = (event) => {
+  event.preventDefault();
+
+  const avatarUrl = avatarUrlInput.value;
+  const submitButton = updateAvatarForm.querySelector('.popup__button');
+
+  submitButton.textContent = 'Сохранение...';
+  submitButton.disabled = true;
+
+  updateAvatar(avatarUrl)
+    .then((data) => {
+      profileAvatar.style.backgroundImage = `url(${data.avatar})`;
+      updateAvatarForm.reset();
+      clearValidation(updateAvatarForm, validationConfig);
+      closePopup(updateAvatarPopup);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      submitButton.textContent = 'Сохранить';
+      submitButton.disabled = false;
+    });
+};
+
+updateAvatarForm.addEventListener('submit', handleUpdateAvatarSubmit);
+

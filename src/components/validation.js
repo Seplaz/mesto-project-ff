@@ -1,28 +1,49 @@
-const showInputError = (popupElement, inputElement, errorMessage, settings) => {
-  const errorElement = popupElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.add(settings.inputErrorClass);
-  errorElement.classList.add(settings.errorClass);
-  errorElement.textContent = errorMessage;
+const showInputError = (formElement, inputElement, errorMessage, config) => {
+  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  inputElement.classList.add(config.inputErrorClass);
+  if (errorElement) {
+    errorElement.textContent = errorMessage;
+    errorElement.classList.add(config.errorClass);
+  }
 };
 
-const hideInputError = (popupElement, inputElement, settings) => {
-  const errorElement = popupElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.remove(settings.inputErrorClass);
-  errorElement.classList.remove(settings.errorClass);
-  errorElement.textContent = '';
+const hideInputError = (formElement, inputElement, config) => {
+  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  inputElement.classList.remove(config.inputErrorClass);
+  if (errorElement) {
+    errorElement.classList.remove(config.errorClass);
+    errorElement.textContent = '';
+  }
 };
 
-const checkInputValidity = (popupElement, inputElement, settings) => {
+const checkImageUrl = async (url) => {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    const contentType = response.headers.get('content-type');
+    return contentType.startsWith('image/');
+  } catch (error) {
+    return false;
+  }
+};
+
+const checkInputValidity = async (formElement, inputElement, config) => {
   if (inputElement.validity.patternMismatch) {
-    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+    inputElement.setCustomValidity(config.avatarUrlError);
+  } else if (inputElement.id === 'avatar-url') {
+    const isValidImage = await checkImageUrl(inputElement.value);
+    if (!isValidImage) {
+      inputElement.setCustomValidity('URL должен вести на изображение');
+    } else {
+      inputElement.setCustomValidity('');
+    }
   } else {
     inputElement.setCustomValidity('');
   }
 
   if (!inputElement.validity.valid) {
-    showInputError(popupElement, inputElement, inputElement.validationMessage, settings);
+    showInputError(formElement, inputElement, inputElement.validationMessage, config);
   } else {
-    hideInputError(popupElement, inputElement, settings);
+    hideInputError(formElement, inputElement, config);
   }
 };
 
@@ -32,47 +53,48 @@ const hasInvalidInput = (inputList) => {
   });
 };
 
-const toggleButtonState = (inputList, buttonElement, settings) => {
+const toggleButtonState = (inputList, buttonElement, config) => {
   if (hasInvalidInput(inputList)) {
-    buttonElement.classList.add(settings.inactiveButtonClass);
+    buttonElement.classList.add(config.inactiveButtonClass);
     buttonElement.disabled = true;
   } else {
-    buttonElement.classList.remove(settings.inactiveButtonClass);
+    buttonElement.classList.remove(config.inactiveButtonClass);
     buttonElement.disabled = false;
   }
 };
 
-const setEventListeners = (popupElement, settings) => {
-  const inputList = Array.from(popupElement.querySelectorAll(settings.inputSelector));
-  const buttonElement = popupElement.querySelector(settings.submitButtonSelector);
-  toggleButtonState(inputList, buttonElement, settings);
-  
+const setEventListeners = (formElement, config) => {
+  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const buttonElement = formElement.querySelector(config.submitButtonSelector);
+
+  toggleButtonState(inputList, buttonElement, config);
+
   inputList.forEach((inputElement) => {
-    inputElement.addEventListener('input', function() {
-      toggleButtonState(inputList, buttonElement, settings);
-      checkInputValidity(popupElement, inputElement, settings);
+    inputElement.addEventListener('input', function () {
+      checkInputValidity(formElement, inputElement, config);
+      toggleButtonState(inputList, buttonElement, config);
     });
   });
 };
 
-export const enableValidation = (settings) => {
-  const formList = Array.from(document.querySelectorAll(settings.formSelector));
+export const enableValidation = (config) => {
+  const formList = Array.from(document.querySelectorAll(config.formSelector));
   formList.forEach((formElement) => {
-    formElement.addEventListener('submit', (evt) => {
+    formElement.addEventListener('submit', function (evt) {
       evt.preventDefault();
     });
-    setEventListeners(formElement, settings);
+
+    setEventListeners(formElement, config);
   });
 };
 
-export const clearValidation = (formElement, settings) => {
-  const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
-  const buttonElement = formElement.querySelector(settings.submitButtonSelector);
-  
+export const clearValidation = (formElement, config) => {
+  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const buttonElement = formElement.querySelector(config.submitButtonSelector);
+
   inputList.forEach((inputElement) => {
-    hideInputError(formElement, inputElement, settings);
-    inputElement.setCustomValidity('');
+    hideInputError(formElement, inputElement, config);
   });
-  
-  toggleButtonState(inputList, buttonElement, settings);
+
+  toggleButtonState(inputList, buttonElement, config);
 };
