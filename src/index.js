@@ -2,7 +2,7 @@ import './pages/index.css';
 import { createCard, onDeleteCard, handleLikeButton } from "./components/card.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfile, getInitialCards, updateProfile } from './components/api.js';
+import { getProfile, getInitialCards, updateProfile, postNewCard } from './components/api.js';
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -65,15 +65,17 @@ const handleImageFormSubmit = (event) => {
 
   const cardName = cardNameInput.value;
   const cardUrl = cardUrlInput.value;
-  const newCardData = {
-    name: cardName,
-    link: cardUrl
-  };
 
-  placesList.prepend(createCard(newCardData, handleLikeButton, onDeleteCard, onOpenPreview));
-  addImageFormElement.reset();
-  clearValidation(addImageFormElement, validationConfig);
-  closePopup(addNewCardPopup);
+  postNewCard(cardName, cardUrl)
+    .then((data) => {
+      placesList.prepend(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
+      addImageFormElement.reset();
+      clearValidation(addImageFormElement, validationConfig);
+      closePopup(addNewCardPopup);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 addImageFormElement.addEventListener('submit', handleImageFormSubmit);

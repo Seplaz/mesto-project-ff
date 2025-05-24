@@ -6,10 +6,12 @@ export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview) => {
   const cardTitle = cardElement.querySelector('.card__title');
   const deleteButton = cardElement.querySelector('.card__delete-button');
   const likeButton = cardElement.querySelector('.card__like-button');
+  const likeCount = cardElement.querySelector('.card__like-count');
 
   cardImage.src = data.link;
   cardImage.alt = `Картинка, на которой показывается ${data.name}`;
   cardTitle.textContent = data.name;
+  likeCount.textContent = data.likes.length;
 
   cardImage.addEventListener('click', () => onOpenPreview(data));
   deleteButton.addEventListener('click', () => onDeleteCard(cardElement));
