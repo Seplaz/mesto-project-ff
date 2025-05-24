@@ -1,6 +1,6 @@
 const cardTemplate = document.querySelector('#card-template').content;
 
-export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview) => {
+export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview, userId) => {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   const cardTitle = cardElement.querySelector('.card__title');
@@ -13,8 +13,14 @@ export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview) => {
   cardTitle.textContent = data.name;
   likeCount.textContent = data.likes.length;
 
+  if (data.owner._id === userId) {
+    deleteButton.style.display = 'block';
+    deleteButton.addEventListener('click', () => onDeleteCard(cardElement, data._id));
+  } else {
+    deleteButton.style.display = 'none';
+  }
+
   cardImage.addEventListener('click', () => onOpenPreview(data));
-  deleteButton.addEventListener('click', () => onDeleteCard(cardElement));
   likeButton.addEventListener('click', (evt) => handleLikeButton(evt));
 
   return cardElement;

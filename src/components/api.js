@@ -1,4 +1,3 @@
-// функции для взаимодействия с сервером
 const config = {
   baseUrl: 'https://nomoreparties.co/v1/wff-cohort-39',
   headers: {
@@ -15,7 +14,7 @@ export const getProfile = () => {
       if (res.ok) {
         return res.json();
       }
-      return Promise.reject(`Ошибка: ${res.status, res.statusText}`);
+      return Promise.reject(`Ошибка: ${res.status} - ${res.statusText}`);
     });
 }
 
@@ -27,7 +26,7 @@ export const getInitialCards = () => {
       if (res.ok) {
         return res.json();
       }
-      return Promise.reject(`Ошибка: ${res.status, res.statusText}`);
+      return Promise.reject(`Ошибка: ${res.status} - ${res.statusText}`);
     });
 }
 
@@ -44,7 +43,7 @@ export const updateProfile = (name, about) => {
       if (res.ok) {
         return res.json();
       }
-      return Promise.reject(`Ошибка: ${res.status, res.statusText}`);
+      return Promise.reject(`Ошибка: ${res.status} - ${res.statusText}`);
     });
 }
 
@@ -61,6 +60,19 @@ export const postNewCard = (name, link) => {
       if (res.ok) {
         return res.json();
       }
-      return Promise.reject(`Ошибка: ${res.status, res.statusText}`);
+      return Promise.reject(`Ошибка: ${res.status} - ${res.statusText}`);
+    });
+}
+
+export const deleteCard = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status} - ${res.statusText}`);
     });
 }

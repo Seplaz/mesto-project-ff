@@ -2,7 +2,7 @@ import './pages/index.css';
 import { createCard, onDeleteCard, handleLikeButton } from "./components/card.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfile, getInitialCards, updateProfile, postNewCard } from './components/api.js';
+import { getProfile, getInitialCards, updateProfile, postNewCard, deleteCard } from './components/api.js';
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -60,6 +60,31 @@ const addImageFormElement = addNewCardPopup.querySelector('.popup__form');
 const cardNameInput = addImageFormElement.querySelector('.popup__input_type_card-name');
 const cardUrlInput = addImageFormElement.querySelector('.popup__input_type_url');
 
+const deleteCardPopup = document.querySelector('.popup_type_delete-card');
+const deleteCardForm = deleteCardPopup.querySelector('.popup__form');
+let cardToDelete = null;
+
+const handleDeleteCard = (cardElement, cardId) => {
+  cardToDelete = { element: cardElement, id: cardId };
+  openPopup(deleteCardPopup);
+};
+
+const handleDeleteCardSubmit = (event) => {
+  event.preventDefault();
+
+  deleteCard(cardToDelete.id)
+    .then(() => {
+      cardToDelete.element.remove();
+      closePopup(deleteCardPopup);
+      cardToDelete = null;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+deleteCardForm.addEventListener('submit', handleDeleteCardSubmit);
+
 const handleImageFormSubmit = (event) => {
   event.preventDefault();
 
@@ -68,7 +93,8 @@ const handleImageFormSubmit = (event) => {
 
   postNewCard(cardName, cardUrl)
     .then((data) => {
-      placesList.prepend(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
+      const cardElement = createCard(data, handleLikeButton, (element, id) => handleDeleteCard(element, id), onOpenPreview, data.owner._id);
+      placesList.prepend(cardElement);
       addImageFormElement.reset();
       clearValidation(addImageFormElement, validationConfig);
       closePopup(addNewCardPopup);
@@ -108,7 +134,8 @@ Promise.all([getProfile(), getInitialCards()])
     profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
 
     cards.forEach((data) => {
-      placesList.append(createCard(data, handleLikeButton, onDeleteCard, onOpenPreview));
+      const cardElement = createCard(data, handleLikeButton, (element, id) => handleDeleteCard(element, id), onOpenPreview, userData._id);
+      placesList.append(cardElement);
     });
   })
   .catch((err) => {
