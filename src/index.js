@@ -1,5 +1,5 @@
 import './pages/index.css';
-import { createCard, onDeleteCard } from "./components/card.js";
+import { createCard } from "./components/card.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, clearValidation } from './components/validation.js';
 import { getProfile, getInitialCards, updateProfile, postNewCard, deleteCard, updateAvatar, checkImageUrl } from './components/api.js';
