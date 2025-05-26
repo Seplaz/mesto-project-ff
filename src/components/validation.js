@@ -16,26 +16,9 @@ const hideInputError = (formElement, inputElement, config) => {
   }
 };
 
-const checkImageUrl = async (url) => {
-  try {
-    const response = await fetch(url, { method: 'HEAD' });
-    const contentType = response.headers.get('content-type');
-    return contentType.startsWith('image/');
-  } catch (error) {
-    return false;
-  }
-};
-
-const checkInputValidity = async (formElement, inputElement, config) => {
+const checkInputValidity = (formElement, inputElement, config) => {
   if (inputElement.validity.patternMismatch) {
-    inputElement.setCustomValidity(config.avatarUrlError);
-  } else if (inputElement.id === 'avatar-url') {
-    const isValidImage = await checkImageUrl(inputElement.value);
-    if (!isValidImage) {
-      inputElement.setCustomValidity('URL должен вести на изображение');
-    } else {
-      inputElement.setCustomValidity('');
-    }
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
     inputElement.setCustomValidity('');
   }

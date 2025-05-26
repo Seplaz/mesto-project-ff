@@ -1,6 +1,8 @@
+import { deleteLike, putLike } from './api.js';
+
 const cardTemplate = document.querySelector('#card-template').content;
 
-export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview, userId) => {
+export const createCard = (data, onDeleteCard, onOpenPreview, userId) => {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   const cardTitle = cardElement.querySelector('.card__title');
@@ -26,15 +28,23 @@ export const createCard = (data, onLikeCard, onDeleteCard, onOpenPreview, userId
   }
 
   cardImage.addEventListener('click', () => onOpenPreview(data));
-  likeButton.addEventListener('click', () => onLikeCard(likeButton, data._id, likeCount));
+  likeButton.addEventListener('click', () => handleLikeCard(likeButton, data._id, likeCount));
 
   return cardElement;
 };
 
-export const handleLikeButton = (event) => {
-  if (event.target) {
-    event.target.classList.toggle('card__like-button_is-active');
-  }
+export const handleLikeCard = (likeButton, cardId, likeCount) => {
+  const isLiked = likeButton.classList.contains('card__like-button_is-active');
+  const likeRequest = isLiked ? deleteLike(cardId) : putLike(cardId);
+
+  likeRequest
+    .then((data) => {
+      likeCount.textContent = data.likes.length;
+      likeButton.classList.toggle('card__like-button_is-active');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 export const onDeleteCard = (cardElement) => {

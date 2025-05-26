@@ -1,8 +1,8 @@
 import './pages/index.css';
-import { createCard, onDeleteCard, handleLikeButton } from "./components/card.js";
+import { createCard, onDeleteCard } from "./components/card.js";
 import { setupPopupListeners, openPopup, closePopup } from "./components/modal.js";
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getProfile, getInitialCards, updateProfile, postNewCard, deleteCard, deleteLike, putLike, updateAvatar } from './components/api.js';
+import { getProfile, getInitialCards, updateProfile, postNewCard, deleteCard, updateAvatar, checkImageUrl } from './components/api.js';
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -55,14 +55,10 @@ const handleProfileFormSubmit = (event) => {
     .then((data) => {
       profileName.textContent = data.name;
       profileDescription.textContent = data.about;
-      profileFormElement.reset();
-      clearValidation(profileFormElement, validationConfig);
       closePopup(profileEditPopup);
     })
     .catch((err) => {
       console.log(err);
-    })
-    .finally(() => {
       submitButton.textContent = 'Сохранить';
       submitButton.disabled = false;
     });
@@ -99,21 +95,6 @@ const handleDeleteCardSubmit = (event) => {
 
 deleteCardForm.addEventListener('submit', handleDeleteCardSubmit);
 
-const handleLikeCard = (likeButton, cardId, likeCount) => {
-  const isLiked = likeButton.classList.contains('card__like-button_is-active');
-
-  const likeRequest = isLiked ? deleteLike(cardId) : putLike(cardId);
-
-  likeRequest
-    .then((data) => {
-      likeCount.textContent = data.likes.length;
-      likeButton.classList.toggle('card__like-button_is-active');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
 const handleImageFormSubmit = (event) => {
   event.preventDefault();
 
@@ -126,7 +107,7 @@ const handleImageFormSubmit = (event) => {
 
   postNewCard(cardName, cardUrl)
     .then((data) => {
-      const cardElement = createCard(data, handleLikeButton, (element, id) => handleDeleteCard(element, id), onOpenPreview, data.owner._id);
+      const cardElement = createCard(data, (element, id) => handleDeleteCard(element, id), onOpenPreview, data.owner._id);
       placesList.prepend(cardElement);
       addImageFormElement.reset();
       clearValidation(addImageFormElement, validationConfig);
@@ -134,8 +115,6 @@ const handleImageFormSubmit = (event) => {
     })
     .catch((err) => {
       console.log(err);
-    })
-    .finally(() => {
       submitButton.textContent = 'Создать';
       submitButton.disabled = false;
     });
@@ -171,7 +150,7 @@ Promise.all([getProfile(), getInitialCards()])
     profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
 
     cards.forEach((data) => {
-      const cardElement = createCard(data, handleLikeCard, (element, id) => handleDeleteCard(element, id), onOpenPreview, userData._id);
+      const cardElement = createCard(data, (element, id) => handleDeleteCard(element, id), onOpenPreview, userData._id);
       placesList.append(cardElement);
     });
   })
@@ -198,7 +177,10 @@ const handleUpdateAvatarSubmit = (event) => {
   submitButton.textContent = 'Сохранение...';
   submitButton.disabled = true;
 
-  updateAvatar(avatarUrl)
+  checkImageUrl(avatarUrl)
+    .then(() => {
+      return updateAvatar(avatarUrl);
+    })
     .then((data) => {
       profileAvatar.style.backgroundImage = `url(${data.avatar})`;
       updateAvatarForm.reset();
@@ -207,8 +189,6 @@ const handleUpdateAvatarSubmit = (event) => {
     })
     .catch((err) => {
       console.log(err);
-    })
-    .finally(() => {
       submitButton.textContent = 'Сохранить';
       submitButton.disabled = false;
     });
