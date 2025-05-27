@@ -59,8 +59,10 @@ const handleProfileFormSubmit = (event) => {
     })
     .catch((err) => {
       console.log(err);
-      submitButton.textContent = 'Сохранить';
       submitButton.disabled = false;
+    })
+    .finally(() => {
+      submitButton.textContent = 'Сохранить';
     });
 };
 
@@ -115,8 +117,10 @@ const handleImageFormSubmit = (event) => {
     })
     .catch((err) => {
       console.log(err);
-      submitButton.textContent = 'Создать';
       submitButton.disabled = false;
+    })
+    .finally(() => {
+      submitButton.textContent = 'Создать';
     });
 };
 
@@ -189,8 +193,10 @@ const handleUpdateAvatarSubmit = (event) => {
     })
     .catch((err) => {
       console.log(err);
-      submitButton.textContent = 'Сохранить';
       submitButton.disabled = false;
+    })
+    .finally(() => {
+      submitButton.textContent = 'Сохранить';
     });
 };
 
